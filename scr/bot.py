@@ -1,9 +1,7 @@
 import json
 import random
 
-from loguru import logger
-from langchain.chat_models import ChatOpenAI
-from prompt import PROMPT, ANGER_LEVELS, MISSPELLING_LEVELS
+from text_tranform import TextTransformer
 
 
 class Bot:
@@ -11,7 +9,7 @@ class Bot:
 
     def __init__(self):
         self._script = self._open_questions()
-        self._llm = ChatOpenAI(openai_api_key=self.OPENAI_KEY, model="gpt-3.5-turbo")
+        self._text_transformer = TextTransformer()
 
     def get_question(self, index: int, anger, misspelling) -> str:
         """
@@ -38,17 +36,6 @@ class Bot:
         return random.choice(questions)
 
     def _transform_question(self, question, anger, misspelling):
-        prompt = self._build_transformation_prompt(question=question, anger=anger, misspelling=misspelling)
-        return self._llm(prompt).content
-
-    def _build_transformation_prompt(self, question, anger, misspelling):
-        anger_text, misspelling_text = self._convert_sliders_to_text(anger=anger, misspelling=misspelling)
-        prompt = PROMPT.format_messages(question=question, anger_level=anger_text, misspelling_level=misspelling_text)
-        logger.debug(f"Prompt after formatting: {prompt}")
-        return prompt
-
-    @staticmethod
-    def _convert_sliders_to_text(anger, misspelling):
-        anger_text = ANGER_LEVELS.get(anger)
-        misspelling_text = MISSPELLING_LEVELS.get(misspelling)
-        return anger_text, misspelling_text
+        return self._text_transformer.transform_question(question=question,
+                                                         anger=anger,
+                                                         misspelling=misspelling)

@@ -11,9 +11,13 @@ bot = Bot()
 
 
 class MessageLLMPayload(BaseModel):
+    # text from other bot (useless for now)
     text: str
+    # index of question from questions list
     required_question_index: int
+    # anger level [0, 1, 2, 3]
     anger_level: int
+    # misspelling level [0, 1, 2, 3]
     misspelling_level: int
 
 

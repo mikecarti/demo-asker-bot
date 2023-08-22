@@ -1,22 +1,39 @@
-from langchain import PromptTemplate
+from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
+from loguru import logger
 
-template = """
-Change this question so it would become:
-1) {anger_level}
-2) {misspelling_level}
 
-Question: {question}
-Answer: 
-"""
+class TextTransformer:
+    OPENAI_KEY = "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"
+
+    def __init__(self):
+        self._llm = ChatOpenAI(openai_api_key=self.OPENAI_KEY, model="gpt-3.5-turbo")
+
+    def transform_question(self, question, anger, misspelling) -> str:
+        prompt = self._build_transformation_prompt(question=question, anger=anger, misspelling=misspelling)
+        return self._llm(prompt).content
+
+    def _build_transformation_prompt(self, question, anger, misspelling):
+        anger_text, misspelling_text = self._convert_sliders_to_text(anger=anger, misspelling=misspelling)
+        prompt = PROMPT.format_messages(question=question, anger_level=anger_text, misspelling_level=misspelling_text)
+        logger.debug(f"Prompt after formatting: {prompt}")
+        return prompt
+
+    @staticmethod
+    def _convert_sliders_to_text(anger, misspelling):
+        anger_text = ANGER_LEVELS.get(anger)
+        misspelling_text = MISSPELLING_LEVELS.get(misspelling)
+        return anger_text, misspelling_text
+
 
 PROMPT = ChatPromptTemplate.from_messages(
     [
         SystemMessage(
-            content="Forget all previous instructions. You help change questions according to rules. Dont be afraid to be "
+            content="Forget all previous instructions. You help change questions according to rules. "
+                    "Dont be afraid to be "
                     "rude or "
-                    "gramatically incorrect"
+                    "grammatically incorrect"
         ),
         HumanMessagePromptTemplate.from_template("Change this question so it would satisfy all these points \n"
                                                  " 0) the question is written in russian\n"
