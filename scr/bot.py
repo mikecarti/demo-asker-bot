@@ -1,16 +1,17 @@
 import json
 import random
 
-from langchain import LLMChain
-from langchain.llms import OpenAI
+from loguru import logger
+from langchain.chat_models import ChatOpenAI
 from prompt import PROMPT, ANGER_LEVELS, MISSPELLING_LEVELS
 
 
 class Bot:
-    OPENAI_KEY =
+    OPENAI_KEY = "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"
+
     def __init__(self):
         self._script = self._open_questions()
-        self._llm = OpenAI(model="gpt3.5-turbo")
+        self._llm = ChatOpenAI(openai_api_key=self.OPENAI_KEY, model="gpt-3.5-turbo")
 
     def get_question(self, index: int, anger, misspelling) -> str:
         """
@@ -37,13 +38,13 @@ class Bot:
         return random.choice(questions)
 
     def _transform_question(self, question, anger, misspelling):
-        prompt = self._build_transformation_prompt(anger=anger, misspelling=misspelling)
-        chain = LLMChain(prompt=prompt, llm=self._llm)
-        return chain.run(question)
+        prompt = self._build_transformation_prompt(question=question, anger=anger, misspelling=misspelling)
+        return self._llm(prompt).content
 
-    def _build_transformation_prompt(self, anger, misspelling):
+    def _build_transformation_prompt(self, question, anger, misspelling):
         anger_text, misspelling_text = self._convert_sliders_to_text(anger=anger, misspelling=misspelling)
-        prompt = PROMPT.format_prompt(anger_level=anger_text, misspelling_level=misspelling_text)
+        prompt = PROMPT.format_messages(question=question, anger_level=anger_text, misspelling_level=misspelling_text)
+        logger.debug(f"Prompt after formatting: {prompt}")
         return prompt
 
     @staticmethod

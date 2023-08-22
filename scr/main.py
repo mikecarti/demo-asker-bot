@@ -17,12 +17,13 @@ class MessageLLMPayload(BaseModel):
     misspelling_level: int
 
 
-@app.post("/get_question")
-def get_question(payload: MessageLLMPayload) -> None:
+@app.get("/get_question")
+def get_question(payload: MessageLLMPayload) -> str:
     text = payload.text
-    logger.debug(f"Message with text {text} received asking for Question #{req_question_index}")
+    required_question_index = payload.required_question_index
+    logger.debug(f"Message with text {text} received asking for Question #{required_question_index}")
     return bot.get_question(
-        index=payload.required_question_index,
+        index=required_question_index,
         anger=payload.anger_level,
         misspelling=payload.misspelling_level
     )
