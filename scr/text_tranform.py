@@ -3,60 +3,38 @@ from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
 from loguru import logger
 
+from prompts import *
+
 
 class TextTransformer:
-    OPENAI_KEY = "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"
-
     def __init__(self):
-        self._llm = ChatOpenAI(openai_api_key=self.OPENAI_KEY, model="gpt-3.5-turbo")
+        self._llm = ChatOpenAI(model="gpt-3.5-turbo")
 
-    def transform_question(self, question, anger, misspelling) -> str:
-        prompt = self._build_transformation_prompt(question=question, anger=anger, misspelling=misspelling)
+    def transform_text(self, text: str, sliders: dict) -> str:
+        for req_slider in REQUIRED_SLIDERS:
+            assert sliders.get(req_slider) is not None
+            assert 0 <= sliders.get(req_slider) <= 3
+
+        prompt = self._build_transformation_prompt(question=text, sliders=sliders)
         return self._llm(prompt).content
 
-    def _build_transformation_prompt(self, question, anger, misspelling):
-        anger_text, misspelling_text = self._convert_sliders_to_text(anger=anger, misspelling=misspelling)
-        prompt = PROMPT.format_messages(question=question, anger_level=anger_text, misspelling_level=misspelling_text)
-        logger.debug(f"Prompt after formatting: {prompt}")
+    def _build_transformation_prompt(self, question: str, sliders: dict) -> list:
+        sliders_text = self._convert_sliders_to_text(sliders=sliders)
+        prompt = PROMPT.format_messages(question=question, **sliders_text)
+        logger.debug(f"Prompt after formatting: {prompt[1].content}")
         return prompt
 
-    @staticmethod
-    def _convert_sliders_to_text(anger, misspelling):
-        anger_text = ANGER_LEVELS.get(anger)
-        misspelling_text = MISSPELLING_LEVELS.get(misspelling)
-        return anger_text, misspelling_text
+    def _convert_sliders_to_text(self, sliders: dict[str, int]) -> dict[str, str]:
+        sliders_text = {}
+        for slider_name, slider_value in sliders.items():
+            value_to_text = LEVELS.get(slider_name)
+            sliders_text[slider_name] = value_to_text.get(slider_value)
+        return sliders_text
 
 
 PROMPT = ChatPromptTemplate.from_messages(
     [
-        SystemMessage(
-            content="Forget all previous instructions. You help change questions according to rules. "
-                    "Dont be afraid to be "
-                    "rude or "
-                    "grammatically incorrect"
-        ),
-        HumanMessagePromptTemplate.from_template("Change this question so it would satisfy all these points \n"
-                                                 " 0) the question is written in russian\n"
-                                                 " 1) the question is {anger_level}\n"
-                                                 " 2) the question is {misspelling_level}\n"
-                                                 " Make sure modified question satisfies every point\n"
-                                                 "Original Question: {question} \nModified Question:"),
+        SystemMessage(content=TRANSFORMER_SYSTEM_PROMPT),
+        HumanMessagePromptTemplate.from_template(TRANSFORMER_QUERY_PROMPT),
     ]
 )
-
-# SLIDERS = ["anger_level", "misspelling_level"]
-# PROMPT = PromptTemplate(template=template, input_variables=["question"] + SLIDERS)
-
-ANGER_LEVELS = {
-    0: "not aggressive and not rude",
-    1: "slightly aggressive and rude",
-    2: "aggressive and rude",
-    3: "extremely aggressive and rude"
-}
-
-MISSPELLING_LEVELS = {
-    0: "spelled perfectly correct",
-    1: "spelled slightly incorrect",
-    2: "spelled mildly incorrect",
-    3: "spelled extremely incorrect"
-}

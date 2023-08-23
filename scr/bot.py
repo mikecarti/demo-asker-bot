@@ -11,7 +11,7 @@ class Bot:
         self._script = self._open_questions()
         self._text_transformer = TextTransformer()
 
-    def get_question(self, index: int, anger, misspelling) -> str:
+    def get_question(self, index: int, sliders: dict[str, int]) -> str:
         """
         Get a question with given characteristics from a scripted "bot".
 
@@ -22,7 +22,7 @@ class Bot:
         """
         assert len(self._script) != 0
         question = self._random_question_from_index(index)
-        return self._transform_question(question, anger, misspelling)
+        return self._transform_question(question, sliders)
 
     @staticmethod
     def _open_questions() -> list:
@@ -35,7 +35,6 @@ class Bot:
         questions = self._script[index]
         return random.choice(questions)
 
-    def _transform_question(self, question, anger, misspelling):
-        return self._text_transformer.transform_question(question=question,
-                                                         anger=anger,
-                                                         misspelling=misspelling)
+    def _transform_question(self, question, sliders):
+        return self._text_transformer.transform_text(text=question,
+                                                     sliders=sliders)
