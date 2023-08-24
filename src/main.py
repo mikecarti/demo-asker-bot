@@ -5,7 +5,7 @@ from typing import Dict
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from scr.bot import Bot
+from src.bot import Bot
 from loguru import logger
 
 # TOKENS
