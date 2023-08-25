@@ -3,7 +3,7 @@ from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import SystemMessage
 from loguru import logger
 
-from prompts import *
+from src.prompts import *
 
 
 class TextTransformer:

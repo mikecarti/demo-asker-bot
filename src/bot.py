@@ -1,7 +1,7 @@
 import json
 import random
 
-from text_tranform import TextTransformer
+from src.text_tranform import TextTransformer
 
 
 class Bot:
@@ -26,7 +26,7 @@ class Bot:
 
     @staticmethod
     def _open_questions() -> list:
-        json_file_path = '../data/questions.json'
+        json_file_path = 'data/questions.json'
         # Open the JSON file in read mode
         with open(json_file_path, 'r') as json_file:
             return json.load(json_file)["questions"]
