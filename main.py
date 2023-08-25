@@ -4,9 +4,9 @@ from typing import Dict
 
 from fastapi import FastAPI
 from pydantic import BaseModel
-
-from bot import Bot
 from loguru import logger
+
+from src.bot import Bot
 
 # TOKENS
 os.environ['OPENAI_API_KEY'] = "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"
@@ -43,7 +43,11 @@ def get_question(payload: MessageLLMPayload) -> str:
     )
 
 
-if __name__ == '__main__':
+def main():
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+
+if __name__ == '__main__':
+    main()
