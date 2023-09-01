@@ -40,7 +40,8 @@ def get_question(payload: MessageLLMPayload) -> str:
     required_question_index = payload.required_question_index
     logger.debug(f"Message with text {text} received asking for Question #{required_question_index}")
     return bot.get_question(
-        index=required_question_index,
+        dialog_index=payload.required_dialog_index,
+        question_index=payload.required_question_index,
         sliders=sliders
     )
 
