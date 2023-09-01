@@ -11,7 +11,7 @@ class Bot:
         self._script = self._open_questions()
         self._text_transformer = TextTransformer()
 
-    def get_question(self, index: int, sliders: dict[str, int]) -> str:
+    def get_question(self, dialog_index: int, question_index: int, sliders: dict[str, int]) -> str:
         """
         Get a question with given characteristics from a scripted "bot".
 
@@ -21,7 +21,7 @@ class Bot:
         :return: Question
         """
         assert len(self._script) != 0
-        question = self._random_question_from_index(index)
+        question = self._select_question(dialog_index, question_index)
         return self._transform_question(question, sliders)
 
     @staticmethod
@@ -29,11 +29,13 @@ class Bot:
         json_file_path = 'data/questions.json'
         # Open the JSON file in read mode
         with open(json_file_path, 'r') as json_file:
-            return json.load(json_file)["questions"]
+            questions = json.load(json_file)["questions"]
+            transposed_questions = list(zip(*questions))
+            return transposed_questions
 
-    def _random_question_from_index(self, index) -> str:
-        questions = self._script[index]
-        return random.choice(questions)
+    def _select_question(self, dialog_index: int, question_index: int) -> str:
+        dialog = self._script[dialog_index]
+        return dialog[question_index]
 
     def _transform_question(self, question, sliders):
         return self._text_transformer.transform_text(text=question,

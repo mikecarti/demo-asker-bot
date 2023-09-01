@@ -24,7 +24,9 @@ bot = Bot()
 class MessageLLMPayload(BaseModel):
     # useless for now
     text: str
-    # question from list index
+    # dialog_index [0, 5)
+    required_dialog_index: int
+    # question from list index [0, 5)
     required_question_index: int
     # all_sliders with int values [0, 4)
     # { "anger_level": 0, ...}
