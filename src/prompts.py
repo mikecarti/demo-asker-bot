@@ -32,13 +32,14 @@ REQUIRED_SLIDERS = list(LEVELS.keys())
 INSTRUCTIONS = "\n".join([f"- {{{REQUIRED_SLIDERS[i]}}}" for i in range(len(REQUIRED_SLIDERS))])
 
 TRANSFORMER_SYSTEM_PROMPT = """Forget all previous instructions.
-You help change text according to rules.
+You change text according to rules.
 Dont be afraid to be rude or grammatically incorrect
 if you are being asked to.
+Write one version of text with not brackets or alternative versions.
 """
 
 TRANSFORMER_QUERY_PROMPT = """Change this text so it would be written both
 - in russian
 """ + INSTRUCTIONS + """
-All of these changes must be done simultaneously on one example of text.
+All of these changes must be done simultaneously on one example of text. 
 Original text: {question} Modified text:"""
