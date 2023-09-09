@@ -1,18 +1,18 @@
 LEVELS = {
     "anger_level": {
-        0: "not aggressive and not rude",
+        0: "",
         1: "slightly aggressive and rude",
         2: "aggressive and rude",
         3: "extremely aggressive and rude"
     },
     "misspelling_level": {
-        0: "spelled perfectly correct",
+        0: "",
         1: "spelled slightly incorrect",
         2: "spelled mildly incorrect",
         3: "spelled extremely incorrect"
     },
     "anxiety_level": {
-        0: "written not nervously",
+        0: "",
         1: "written slightly nervously",
         2: "written nervously with some unsure question repetitions",
         3: "written extremely nervous with a lot of unsure question repetitions"
