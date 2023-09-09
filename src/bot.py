@@ -34,8 +34,8 @@ class Bot:
             return transposed_questions
 
     def _select_question(self, dialog_index: int, question_index: int) -> str:
-        dialog = self._script[dialog_index]
-        return dialog[question_index]
+        dialog = self._script[question_index]
+        return dialog[dialog_index]
 
     def _transform_question(self, question, sliders):
         return self._text_transformer.transform_text(text=question,
