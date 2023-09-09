@@ -1,6 +1,6 @@
 import json
 import random
-
+from loguru import logger
 from src.text_tranform import TextTransformer
 
 
@@ -14,14 +14,10 @@ class Bot:
     def get_question(self, dialog_index: int, question_index: int, sliders: dict[str, int]) -> str:
         """
         Get a question with given characteristics from a scripted "bot".
-
-        :param index: index of question in list.
-        :param anger: value from 0 to 3 indicating anger level.
-        :param misspelling: value from 0 to 3 indicating misspelling level.
         :return: Question
         """
         assert len(self._script) != 0
-        question = self._select_question(dialog_index, question_index)
+        question = self._select_question(dialog_index=dialog_index, question_index=question_index)
         return self._transform_question(question, sliders)
 
     @staticmethod
@@ -34,6 +30,7 @@ class Bot:
             return transposed_questions
 
     def _select_question(self, dialog_index: int, question_index: int) -> str:
+        logger.debug(f"Dialog index: {dialog_index}, Question index: {question_index}")
         dialog = self._script[question_index]
         return dialog[dialog_index]
 

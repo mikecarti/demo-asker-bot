@@ -24,7 +24,7 @@ bot = Bot()
 class MessageLLMPayload(BaseModel):
     # useless for now
     text: str
-    # dialog_index [0, 5)
+    # dialog_index [0, 4)
     required_dialog_index: int
     # question from list index [0, 5)
     required_question_index: int
@@ -37,8 +37,7 @@ class MessageLLMPayload(BaseModel):
 def get_question(payload: MessageLLMPayload) -> str:
     text = payload.text
     sliders = payload.sliders
-    required_question_index = payload.required_question_index
-    logger.debug(f"Message with text {text} received asking for Question #{required_question_index}")
+    logger.debug(f"Message with text {text} received asking for Question #{payload.required_question_index}")
     return bot.get_question(
         dialog_index=payload.required_dialog_index,
         question_index=payload.required_question_index,
