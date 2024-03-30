@@ -9,7 +9,7 @@ from loguru import logger
 from src.bot import Bot
 
 # TOKENS
-os.environ['OPENAI_API_KEY'] = "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"
+os.environ['OPENAI_API_KEY'] = ""
 
 # Logging
 logging.basicConfig(level=logging.INFO)
